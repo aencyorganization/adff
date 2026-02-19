@@ -1,7 +1,7 @@
 {
   "name": "adff",
-  "version": "1.0.0",
-  "description": "A simple function-based wrapper for Fluxer - Create Discord/Fluxer bots without coding, just functions!",
+  "version": "1.0.3",
+  "description": "Application Designer For Fluxer - Create Fluxer/Discord bots without coding, just functions!",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -42,11 +42,7 @@
     "url": "https://github.com/aencyorganization/adff/issues"
   },
   "homepage": "https://github.com/aencyorganization/adff#readme",
-  "dependencies": {
-    "@discordjs/core": "^2.0.0",
-    "@discordjs/rest": "^2.0.0",
-    "@discordjs/ws": "^1.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "bun-types": "latest",
     "typescript": "^5.0.0"

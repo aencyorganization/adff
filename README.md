@@ -1,4 +1,4 @@
-# ADFF - Another Discord/Fluxer Framework
+# ADFF - Application Designer For Fluxer
 
 A simple, function-based wrapper for creating Fluxer/Discord bots without coding. Just use functions!
 
@@ -124,6 +124,17 @@ Sets the embed color. If multiple colors are provided, picks one randomly.
 ```javascript
 $color[#FF0000]
 $color[#FF0000;#00FF00;#0000FF]
+```
+
+### $footer[text;iconUrl]
+Sets the embed footer. Requires `$title` or `$description` to be set first.
+
+- **Argument 1** (required): Footer text
+- **Argument 2** (optional): Icon URL for the footer
+
+```javascript
+$footer[Jully Services]
+$footer[Powered by ADFF;https://example.com/icon.png]
 ```
 
 ## Nested Functions

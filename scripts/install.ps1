@@ -1,63 +1,129 @@
 # ============================================
-# ADFF Installation Script for Windows
-# PowerShell Version
+# ADFF - Application Designer For Fluxer
+# Installation Script for Windows (PowerShell)
 # ============================================
 
-# Colors
-function Write-ColorOutput($ForegroundColor) {
-    $fc = $host.UI.RawUI.ForegroundColor
-    $host.UI.RawUI.ForegroundColor = $ForegroundColor
-    if ($args) {
-        Write-Output $args
+# Colors and styling
+function Write-ColorOutput {
+    param([string]$Text, [string]$Color = "White")
+    Write-Host $Text -ForegroundColor $Color
+}
+
+function Write-Step {
+    param([string]$Message)
+    Write-Host ""
+    Write-Host "▸ " -ForegroundColor Cyan -NoNewline
+    Write-Host $Message -ForegroundColor White
+}
+
+function Write-Success {
+    param([string]$Message)
+    Write-Host "  ✓ " -ForegroundColor Green -NoNewline
+    Write-Host $Message
+}
+
+function Write-Error {
+    param([string]$Message)
+    Write-Host "  ✗ " -ForegroundColor Red -NoNewline
+    Write-Host $Message
+}
+
+function Write-Warning {
+    param([string]$Message)
+    Write-Host "  ! " -ForegroundColor Yellow -NoNewline
+    Write-Host $Message
+}
+
+function Write-Info {
+    param([string]$Message)
+    Write-Host "  → " -ForegroundColor Cyan -NoNewline
+    Write-Host $Message
+}
+
+function Confirm {
+    param([string]$Prompt, [string]$Default = "n")
+    
+    $choices = if ($Default -eq "y") { "[Y/n]" } else { "[y/N]" }
+    $response = Read-Host "$Prompt $choices"
+    
+    if ([string]::IsNullOrWhiteSpace($response)) {
+        return $Default -eq "y"
     }
-    $host.UI.RawUI.ForegroundColor = $fc
+    
+    return $response -match "^[Yy]$"
 }
 
-function Write-Step($message) {
-    Write-ColorOutput Cyan "`n▶ $message"
-}
-
-function Write-Success($message) {
-    Write-ColorOutput Green "✓ $message"
-}
-
-function Write-Error($message) {
-    Write-ColorOutput Red "✗ $message"
-}
-
-function Write-Warning($message) {
-    Write-ColorOutput Yellow "! $message"
+function Show-Header {
+    Clear-Host
+    Write-Host ""
+    Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Magenta
+    Write-Host "║                                                           ║" -ForegroundColor Magenta
+    Write-Host "║    █████╗ ███████╗ ██████╗ ██████╗ ██████╗               ║" -ForegroundColor Magenta
+    Write-Host "║   ██╔══██╗██╔════╝██╔════╝██╔═══██╗██╔══██╗              ║" -ForegroundColor Magenta
+    Write-Host "║   ███████║███████╗██║     ██║   ██║██║  ██║              ║" -ForegroundColor Magenta
+    Write-Host "║   ██╔══██║╚════██║██║     ██║   ██║██║  ██║              ║" -ForegroundColor Magenta
+    Write-Host "║   ██║  ██║███████║╚██████╗╚██████╔╝██████╔╝              ║" -ForegroundColor Magenta
+    Write-Host "║   ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═════╝               ║" -ForegroundColor Magenta
+    Write-Host "║                                                           ║" -ForegroundColor Magenta
+    Write-Host "║       " -ForegroundColor Magenta -NoNewline
+    Write-Host "Application Designer For Fluxer" -ForegroundColor Cyan -NoNewline
+    Write-Host "                ║" -ForegroundColor Magenta
+    Write-Host "║                                                           ║" -ForegroundColor Magenta
+    Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Magenta
+    Write-Host ""
 }
 
 # Main installation
 function Main {
-    Write-ColorOutput Blue "`n╔══════════════════════════════════════╗"
-    Write-ColorOutput Blue "║     ADFF - Fluxer Bot Framework      ║"
-    Write-ColorOutput Blue "║         Installation Script          ║"
-    Write-ColorOutput Blue "╚══════════════════════════════════════╝`n"
-
+    Show-Header
+    
+    $currentDir = Get-Location
+    
+    # Show installation info
+    Write-Host "This script will create an ADFF bot project in:" -ForegroundColor White
+    Write-Host "  $currentDir" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Files to be created:"
+    Write-Host "  • " -ForegroundColor Green -NoNewline
+    Write-Host "index.js      (main configuration)"
+    Write-Host "  • " -ForegroundColor Green -NoNewline
+    Write-Host "vars.js       (reserved for future)"
+    Write-Host "  • " -ForegroundColor Green -NoNewline
+    Write-Host "package.json  (project dependencies)"
+    Write-Host "  • " -ForegroundColor Green -NoNewline
+    Write-Host "commands/     (your commands folder)"
+    Write-Host ""
+    
+    # Confirmation
+    if (-not (Confirm "Continue with installation?" "n")) {
+        Write-Host ""
+        Write-Host "Installation cancelled." -ForegroundColor Yellow
+        exit 0
+    }
+    
     # Check for Bun
-    Write-Step "Checking for Bun..."
+    Write-Step "Checking prerequisites..."
+    
     if (Get-Command bun -ErrorAction SilentlyContinue) {
         $bunVersion = bun --version
-        Write-Success "Bun found (version $bunVersion)"
+        Write-Success "Bun v$bunVersion found"
     } else {
         Write-Error "Bun is not installed!"
-        Write-ColorOutput Yellow "`nPlease install Bun first:"
-        Write-ColorOutput Yellow "  powershell -c `"irm bun.sh/install.ps1 | iex`""
-        Write-ColorOutput Yellow "`nOr visit: https://bun.sh`n"
+        Write-Host ""
+        Write-Host "Please install Bun first:" -ForegroundColor Yellow
+        Write-Host "  powershell -c `"irm bun.sh/install.ps1 | iex`"" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "Or visit: " -ForegroundColor Yellow -NoNewline
+        Write-Host "https://bun.sh" -ForegroundColor Cyan
         exit 1
     }
-
-    # Create project structure
-    Write-Step "Creating project structure..."
     
     # Create directories
+    Write-Step "Creating project structure..."
     New-Item -ItemType Directory -Force -Path "commands" | Out-Null
+    Write-Success "Created commands/ directory"
     
-    Write-Success "Directories created"
-
-    # Create index.js if it doesn't exist
+    # Create index.js
     Write-Step "Creating configuration files..."
     
     if (-not (Test-Path "index.js")) {
@@ -103,8 +169,8 @@ process.on('SIGINT', () => {
     } else {
         Write-Warning "index.js already exists, skipping"
     }
-
-    # Create vars.js if it doesn't exist
+    
+    # Create vars.js
     if (-not (Test-Path "vars.js")) {
         $varsContent = @'
 // ============================================
@@ -122,7 +188,7 @@ export const vars = {
     } else {
         Write-Warning "vars.js already exists, skipping"
     }
-
+    
     # Create example commands
     Write-Step "Creating example commands..."
     
@@ -139,7 +205,7 @@ $aliases[p;pong]
     } else {
         Write-Warning "commands/ping.js already exists, skipping"
     }
-
+    
     if (-not (Test-Path "commands/embed.js")) {
         $embedContent = @'
 // Example command: embed
@@ -149,13 +215,14 @@ $aliases[e]
 $title[Example Embed]
 $description[This is an example embed created with ADFF functions!]
 $color[#5865F2]
+$footer[Powered by ADFF]
 '@
         Set-Content -Path "commands/embed.js" -Value $embedContent -NoNewline
         Write-Success "Created commands/embed.js"
     } else {
         Write-Warning "commands/embed.js already exists, skipping"
     }
-
+    
     if (-not (Test-Path "commands/random.js")) {
         $randomContent = @'
 // Example command: random
@@ -169,8 +236,8 @@ $randomText[You rolled a 1!;You rolled a 2!;You rolled a 3!;You rolled a 4!;You 
     } else {
         Write-Warning "commands/random.js already exists, skipping"
     }
-
-    # Create package.json if it doesn't exist
+    
+    # Create package.json
     Write-Step "Creating package.json..."
     
     if (-not (Test-Path "package.json")) {
@@ -193,23 +260,34 @@ $randomText[You rolled a 1!;You rolled a 2!;You rolled a 3!;You rolled a 4!;You 
     } else {
         Write-Warning "package.json already exists, skipping"
     }
-
+    
     # Install dependencies
     Write-Step "Installing dependencies..."
     bun install
     Write-Success "Dependencies installed"
-
-    # Final message
-    Write-ColorOutput Green "`n╔══════════════════════════════════════╗"
-    Write-ColorOutput Green "║       Installation Complete!         ║"
-    Write-ColorOutput Green "╚══════════════════════════════════════╝`n"
     
-    Write-ColorOutput Yellow "Next steps:"
-    Write-ColorOutput Yellow "  1. Edit index.js and add your bot token"
-    Write-ColorOutput Yellow "  2. Create commands in the commands/ folder"
-    Write-ColorOutput Yellow "  3. Run your bot with: bun run index.js`n"
-    
-    Write-ColorOutput Cyan "Documentation: https://github.com/aencyorganization/adff"
+    # Success message
+    Write-Host ""
+    Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
+    Write-Host "║                    " -ForegroundColor Green -NoNewline
+    Write-Host "Installation Complete!" -ForegroundColor White -NoNewline
+    Write-Host "                    ║" -ForegroundColor Green
+    Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Next steps:" -ForegroundColor White
+    Write-Host ""
+    Write-Host "  1. Edit " -ForegroundColor Cyan -NoNewline
+    Write-Host "index.js" -ForegroundColor White -NoNewline
+    Write-Host " and add your bot token"
+    Write-Host "  2. Create commands in the " -ForegroundColor Cyan -NoNewline
+    Write-Host "commands/" -ForegroundColor White -NoNewline
+    Write-Host " folder"
+    Write-Host "  3. Run your bot: " -ForegroundColor Cyan -NoNewline
+    Write-Host "bun run index.js" -ForegroundColor White
+    Write-Host ""
+    Write-Host "Documentation: " -ForegroundColor White -NoNewline
+    Write-Host "https://github.com/aencyorganization/adff" -ForegroundColor Cyan
+    Write-Host ""
 }
 
 # Run main

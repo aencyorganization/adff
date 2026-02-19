@@ -87,6 +87,33 @@ registerFunction('color', async (args, context, state) => {
   return '';
 });
 
+/**
+ * $footer[text;iconUrl]
+ * Sets the embed footer (requires title or description to be set)
+ */
+registerFunction('footer', async (args, context, state) => {
+  if (args.length < 1 || !args[0]) {
+    console.warn('[ADFF] $footer requires at least 1 argument (text)');
+    return '';
+  }
+  
+  // Check if embed has been started (title or description)
+  if (!state.embed.title && !state.embed.description) {
+    console.warn('[ADFF] $footer requires $title or $description to be set first');
+    return '';
+  }
+  
+  const text = args[0];
+  const iconUrl = args[1] || undefined;
+  
+  state.embed.footer = {
+    text,
+    ...(iconUrl && { icon_url: iconUrl })
+  };
+  
+  return '';
+});
+
 // ============================================
 // INTERPRETER
 // ============================================
