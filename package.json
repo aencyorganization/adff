@@ -1,0 +1,57 @@
+{
+  "name": "adff",
+  "version": "1.0.0",
+  "description": "A simple function-based wrapper for Fluxer - Create Discord/Fluxer bots without coding, just functions!",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "templates",
+    "scripts"
+  ],
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target node --minify",
+    "dev": "bun run --watch src/index.ts",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "fluxer",
+    "discord",
+    "bot",
+    "wrapper",
+    "no-code",
+    "low-code",
+    "functions",
+    "adff"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aencyorganization/adff"
+  },
+  "bugs": {
+    "url": "https://github.com/aencyorganization/adff/issues"
+  },
+  "homepage": "https://github.com/aencyorganization/adff#readme",
+  "dependencies": {
+    "@discordjs/core": "^2.0.0",
+    "@discordjs/rest": "^2.0.0",
+    "@discordjs/ws": "^1.0.0"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
